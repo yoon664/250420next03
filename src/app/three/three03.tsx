@@ -1,6 +1,6 @@
 import { Box, PerspectiveCamera } from '@react-three/drei'
-import { Canvas, useFrame } from '@react-three/fiber'
-import React, { useRef } from 'react'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import React, { useEffect, useRef } from 'react'
 import * as THREE from 'three'
 
 /* 
@@ -66,6 +66,77 @@ const TwoNodeCamera = () => {
         />
     )
 }
+/*
+    [ Pivot ]
+    pivot은 객체가 회전하는 기준점 역할 (중심점은 기본적으로 0,0,0)
+    카메라가 고정된 채로 pivot(group)이 회전
+*/
+const PivotCamera = ()=>{
+    const cameraRef = useRef<THREE.PerspectiveCamera>(null);
+    const pivotRef = useRef<THREE.Group>(null);
+
+    useFrame(()=>{
+        if(pivotRef.current) {
+            pivotRef.current.rotation.y += 0.1;
+        }
+    })
+
+    return (
+        <group ref={pivotRef} position={[0,2,0]}>
+            <PerspectiveCamera 
+                ref={cameraRef} 
+                makeDefault
+                position={[0,0,5]}
+                fov = {75}
+                near = {0.1}
+                far={1000}
+            />
+        </group>
+        
+    )
+}
+
+/*
+    [ useThree ]
+    - 카메라에 접금하는 두번째 방법]
+    - Perspective Camera를 만들지 않고 현재 활성화된 카메라를 참조
+    - 주로 카메라 조작에 사용
+*/
+const ThreeCamera = ()=>{
+    const { camera,set } = useThree();
+
+    useEffect(()=>{
+        camera.position.set(0,2,5);
+        camera.position.x = (-Math.PI/180*10);
+        camera.updateProjectionMatrix();
+
+        set({camera})
+    }, [camera,set])
+
+    useFrame(()=>{
+        camera.rotation.y += 0.1;
+    })
+
+    return null;
+}
+
+const SmoothCamera = ()=>{
+    const { camera } = useThree();
+    const targetPosition = useRef(new THREE.Vector3(2,2,2));
+
+    useFrame(()=>{
+        /*
+            [ lerp ]
+            목표위치로 부드럽게 이동하는 메서드
+            lerp(목표위치, 이동속도)
+        */
+        camera.position.lerp(targetPosition.current, 0.05);
+
+        camera.lookAt(0,0,0);
+    })
+
+    return null;
+}
 
 const Three03 = () => {
   return (
@@ -74,7 +145,11 @@ const Three03 = () => {
             <ambientLight intensity={10} />
 
             {/* <Camera /> */}
-            <TwoNodeCamera />
+            {/* <TwoNodeCamera /> */}
+            {/* <PivotCamera /> */}
+            {/* <ThreeCamera /> */}
+            <SmoothCamera />
+
             <Box position={[0,0,0]} args={[1,1,1]}>
                 <meshStandardMaterial color='orange' />
             </Box>
