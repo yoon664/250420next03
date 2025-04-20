@@ -1,4 +1,4 @@
-import { Sphere } from '@react-three/drei'
+import { Box, Cone, Cylinder, OrbitControls, Sphere } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import React from 'react'
 
@@ -26,6 +26,21 @@ const Three01 = () => {
             <Sphere position={[-4,0,0]} args={[1,32,32]}>
                 <meshStandardMaterial color='red' />
             </Sphere>
+
+            <Cone position={[2,0,0]} args={[1,2,32]}>
+                <meshStandardMaterial color='green' />
+            </Cone>
+
+            <Box position={[0,0,0]} args={[1,1,1]}>
+                <meshStandardMaterial color='orange' />
+            </Box>
+
+            <Cylinder position={[0,0,-2]} args={[1,1,2,32]}>
+                <meshStandardMaterial color='royalblue' />
+            </Cylinder>
+
+            {/* 카메라 조작 컴포넌트 */}
+            <OrbitControls />
 
         </Canvas>
     </div>
