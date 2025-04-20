@@ -1,5 +1,6 @@
-import { Box, Cone, Cylinder, OrbitControls, Sphere } from '@react-three/drei'
+import { Box, Cone, Cylinder, Environment, MeshTransmissionMaterial, OrbitControls, Sky, Sphere, Torus } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
+import { tree } from 'next/dist/build/templates/app-page'
 import React from 'react'
 
 const Three01 = () => {
@@ -39,8 +40,29 @@ const Three01 = () => {
                 <meshStandardMaterial color='royalblue' />
             </Cylinder>
 
+            <Torus position={[2,0,-4]} args={[1,0.4,16,100]}>
+                {/* 더 복잡한 물리기반 렌더링 지원 */}
+                {/* <meshStandardMaterial
+                color='silver'
+                metalness={0.9}
+                roughness={0.1}
+                /> */}
+
+                {/* 투명도 지원 */}
+                <MeshTransmissionMaterial
+                    transparent={true} // 투명도 활성화
+                    opacity={0.8}
+                />
+            </Torus>
+
             {/* 카메라 조작 컴포넌트 */}
             <OrbitControls />
+
+            {/* 실시간 하늘과 태양의 위치 반영하는 배경 */}
+            <Sky sunPosition={[100,20,100]} />
+
+            {/* 주변 환경 설정 sky와는 별개 */}
+            <Environment preset='sunset' />
 
         </Canvas>
     </div>
